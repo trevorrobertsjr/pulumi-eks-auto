@@ -1,0 +1,7 @@
+name: pulumi-eks-auto
+description: AWS EKS Auto Mode Rocks
+runtime: go
+config:
+  pulumi:tags:
+    value:
+      pulumi:template: aws-go
