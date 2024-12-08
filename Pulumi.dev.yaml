@@ -1,2 +1,7 @@
 config:
   aws:region: us-east-2
+  pulumi-eks-auto:iamUserName: work-lab
+  pulumi-eks-auto:subnetList:
+    - subnet-0e7542f2f130458f0
+    - subnet-0d90f6530d1b2ff23
+    - subnet-014a767b03b8047f4

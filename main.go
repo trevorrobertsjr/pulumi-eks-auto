@@ -12,13 +12,20 @@ import (
 func main() {
 	pulumi.Run(func(ctx *pulumi.Context) error {
 		// BEGIN Input Parameters
-		iamUserName, configExists := ctx.GetConfig("iamUserName")
+		iamUserName, configExists := ctx.GetConfig("pulumi-eks-auto:iamUserName")
 		if !configExists {
+			// fmt.Println(iamUserName)
 			return fmt.Errorf("iamUserName config is required")
 		}
-		subnetList, configExists := ctx.GetConfig("subnetList")
+		subnetListInput, configExists := ctx.GetConfig("pulumi-eks-auto:subnetList")
 		if !configExists {
 			return fmt.Errorf("subnetList config is required")
+		}
+
+		var subnetList []string
+		err := json.Unmarshal([]byte(subnetListInput), &subnetList)
+		if err != nil {
+			return fmt.Errorf("failed to parse subnetList: %v", err)
 		}
 
 		subnetIds := pulumi.StringArray{}
@@ -136,12 +143,12 @@ func main() {
 					Enabled: pulumi.Bool(true),
 				},
 			},
+			BootstrapSelfManagedAddons: pulumi.Bool(false),
 			VpcConfig: &eks.ClusterVpcConfigArgs{
 				EndpointPrivateAccess: pulumi.Bool(true),
 				EndpointPublicAccess:  pulumi.Bool(true),
 				SubnetIds:             pulumi.StringArray(subnetIds),
 			},
-			BootstrapSelfManagedAddons: pulumi.Bool(false),
 		}, pulumi.DependsOn([]pulumi.Resource{
 			clusterAmazonEKSClusterPolicy,
 			clusterAmazonEKSComputePolicy,
